@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 const fetchData = (count) => { //fetch data from the server
-    fetch('http://localhost:3000/web') 
+    let p = fetch('http://localhost:3000/web') 
         .then((response) => { // check if the response is ok
             if (response.ok) {
                 return response.json();
@@ -11,17 +11,20 @@ const fetchData = (count) => { //fetch data from the server
             const web = data[count % 10];
             localStorage.setItem('webData', web.id);
             console.log(web.id); // check the data
-            return web;
+            return web.id;
         })
         .catch(error => {
             console.error('Error:', error);
         });
         
+    p.then((id) => {
+        return id;
+    });
+    return p;
 }
 
 const ButtonComponent = () => { 
     // button component, increment count and fetch data.
-    // 
     
     const [count, setCount] = useState(0);
 
@@ -30,11 +33,13 @@ const ButtonComponent = () => {
     };
     const [datain, setDatain] = useState(0);
 
-    const onClick = () => {
-        fetchData(count);
-        incrementCount(); 
-        //get the stored data, I don't know how to get the data from the fetch function
-        setDatain(localStorage.getItem('webData')); 
+
+    const onClick = async () => {
+        const id = await fetchData(count);
+        if (id !== null) {
+            setDatain(id);
+        }
+        incrementCount();
     }
 
     return (
